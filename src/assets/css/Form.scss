@@ -1,0 +1,45 @@
+.enotif-datepicker {
+    position: relative;
+    width: 150px;
+
+    &.disabled {
+        pointer-events: none;
+    }
+    
+    .icon {
+        position: absolute;
+        font-size: 14px;
+        color: var(--slate-500);
+        right: 13px;
+        top: 10px;
+    }
+}
+
+.form-horizontal {
+    .button-container {
+        position: relative;
+        width: calc(100% + 60px);
+        padding: 25px 30px;
+        background-color: #efeef0;
+        left: -30px;
+        margin-top: 60px;
+        // background-color: var(--red-500);
+        // border-color: var(--red-500);
+        // color: #fff;
+        // border: none;
+    }
+}
+
+.form-group-quarterly {
+    .input-month {
+        width: 340px;
+    }
+
+    .input-date {
+        width: 130px;
+    }
+
+    .input-time {
+        width: 160px;
+    }
+}

@@ -1,0 +1,24 @@
+.modal {
+    .modal-title {
+        font-weight: 600;
+        font-size: 20px;
+    }
+    
+    .modal-header {
+        border-bottom: 1px solid #e5ecf3;
+        padding: 10px 15px;
+        // border-bottom: none;
+    }
+
+    .modal-body {
+        padding-top: 25px;
+        padding-bottom: 30px;
+    }
+
+    .modal-footer {
+        background-color: var(--slate-200);
+        border-top: none;
+        display: flex;
+        justify-content: space-between;
+    }
+}

@@ -1,0 +1,24 @@
+.nav.nav-tabs {
+    border: none;
+    
+    .nav-item {
+        margin-right: 3px;
+
+        .nav-link {
+            font-weight: 500;
+            border: none;
+            background-color: var(--slate-500);
+            color: #fff;
+
+            &.active {
+                background-color: var(--red-500);
+                color: #fff;
+            }
+        }
+    }
+}
+
+.tab-content {
+    padding-left: 10px;
+    padding-right: 10px;
+}

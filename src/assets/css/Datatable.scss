@@ -1,0 +1,62 @@
+.enotif-datatable {
+    .rdt_Table {
+        .rdt_TableCol_Sortable {
+            svg {
+                width: 12px;
+                margin-left: 5px;
+            }
+        }
+    }
+
+    &.size-sm {
+        .rdt_TableCell,
+        .rdt_TableCol {
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+    }
+
+    .datatable-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        
+        .datatable-title {
+            font-size: 16px;
+            color: var(--gray-400);
+        }
+        
+    }
+
+    .btn-actions {
+        display: flex;
+        position: relative;
+    
+        > div {
+            margin-right: 5px;
+    
+            &:last-child {
+                margin-right: 0;
+            }
+
+            .btn {
+                padding-left: 13px;
+                padding-right: 13px;
+            }
+        }
+
+        &.separate-delete-button {
+            .btn-delete {
+                margin-left: 8px;
+            }
+        }
+
+
+        .btn {
+            svg {
+                margin-top: -3px;
+            }
+        }
+    }
+}
