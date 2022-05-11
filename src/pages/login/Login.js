@@ -53,7 +53,7 @@ export default function Login() {
 
         <form onSubmit={onLoginPressed}>
           <div className='form-group'>
-            <label htmlFor="#">Username</label>
+            <label htmlFor="#">Email</label>
             <input type="text" className='form-control' onChange={(event) => setUsername(event.target.value)} placeholder="Username" />
           </div>
 

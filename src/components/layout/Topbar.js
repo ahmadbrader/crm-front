@@ -26,6 +26,7 @@ export default function Topbar() {
       })
 
       if(action.isConfirmed && action.value) {
+        localStorage.clear();
           navigate('/')
       }
   }

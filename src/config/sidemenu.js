@@ -56,6 +56,9 @@ const Menu = [
         url: '#',
         submenu: [
             {
+                text: 'Add User',
+                url: '/app/user/add'
+            },{
                 text: 'User Roles',
                 url: '/'
             },

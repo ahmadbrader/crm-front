@@ -19,6 +19,7 @@ import Sales from "pages/sales/Sales";
 import CreateProspecting from "pages/process-prospecting/CreateProspecting";
 import Closing from "pages/process-closing/Closing";
 import ViewClosing from "pages/process-closing/ViewClosing";
+import AddUser from "pages/user/AddUser";
 
 function UserAppTemplate() {
   return (
@@ -37,6 +38,7 @@ function UserAppTemplate() {
                 <Route path="/process/approaching" element={<Approaching />} />
                 <Route path="/process/probing" element={<Probing />} />
                 <Route path="/process/closing" element={<Closing />} />
+                <Route path="/user/add" element={<AddUser />} />
                 <Route path="/process/closing/:id" element={<ViewClosing />} />
                 <Route path="/process/presentation" element={<Presentation />} />
                 <Route path="/master/department" element={<SetupDepartment />} />

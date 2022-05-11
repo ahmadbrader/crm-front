@@ -192,11 +192,6 @@ export default function Prospecting() {
             sortable: true,
         },
         {
-            name: 'Product',
-            selector: row => row.product_temp,
-            sortable: true,
-        },
-        {
             name: 'Sales',
             selector: row => row.name_user,
             sortable: true,

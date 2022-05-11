@@ -22,7 +22,7 @@ function _post(url='', data={}, parameter='') {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization" : getToken() 
+            "Authorization" : "Bearer "+getToken() 
         },
         data,
     }
@@ -50,7 +50,8 @@ function _update(url='', data={}, parameter='') {
         method: "PUT",
         headers: {
             "Accept": "*/*",
-            "Content-Type": "application/json" 
+            "Content-Type": "application/json", 
+            "Authorization" : "Bearer "+getToken() 
         },
         data,
     }
@@ -64,6 +65,7 @@ function _delete(url='', parameter='') {
         method: "DELETE",
         headers: {
             "Accept": "*/*",
+            "Authorization" : "Bearer "+getToken() 
         },
     }
     
@@ -104,6 +106,10 @@ export function saveNewProspecting(form) {
     return _post('contact', form);
 }
 
+export function saveNewUser(form) {
+    return _post('user/register', form);
+}
+
 export function addProduct(form) {
     return _post('process/closing/add-product', form);
 }
@@ -122,6 +128,10 @@ export function updateToPresenting(form) {
 
 export function getAllSales() {
     return _get('user');
+}
+
+export function getAllCompanies() {
+    return _get('company');
 }
 
 export function getApplications() {

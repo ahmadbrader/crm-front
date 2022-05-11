@@ -107,7 +107,7 @@ export default function Sales() {
                                         <Card.Text>
                                             {row.email}
                                         </Card.Text>
-                                        <Button variant="primary">Go somewhere</Button>
+                                        <Button variant="danger">Delete</Button>
                                     </Card.Body>
                                 </Card>
                             </Col>

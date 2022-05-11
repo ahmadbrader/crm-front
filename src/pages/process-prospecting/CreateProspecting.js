@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Col, Form, Tab, Tabs } from 'react-bootstrap'
 import toast from 'react-hot-toast'
-import { getAllSales, getApplications, getCategories, getDepartments, saveNewProspecting } from 'services/RestApi'
+import { getAllSales, getAllCompanies, saveNewProspecting } from 'services/RestApi'
 import AppContext from 'utils/AppContext'
 import { validateMasterForm } from "utils/ConfigFormValidation"
 import { showAlertLoader, closeAlert } from "utils/Alert"
 import { useNavigate } from 'react-router-dom'
+import { getUserId, getRole, getUser } from 'services/GlobalVariable'
 
 export default function CreateProspecting() {
 
@@ -14,7 +15,7 @@ export default function CreateProspecting() {
 
     const [ departments, setDepartments ] = useState([])
     const [ applicationSource, setApplicationSource ] = useState([])
-    const [ categories, setCategories ] = useState([])
+    const [ companies, setCompany ] = useState([])
     const [ user, setUser ] = useState([])
     const [ formModal, setFormModal ] = useState([])
     const [ formData, setFormData ] = useState([])
@@ -31,8 +32,23 @@ export default function CreateProspecting() {
         setPageData({...pageData, active:'setup-notification', title: 'Create Notification Config' })
 
         async function fetchData(){
-            let _response = await getAllSales();
-            setUser(_response.data)
+            let _responseC = await getAllCompanies();
+            setCompany(_responseC.data)
+            if (getRole() === 'Admin') {
+                let _response = await getAllSales();
+                setUser(_response.data)
+            } else {
+                let _user = [
+                    {
+                        'id' : getUserId(),
+                        'name' : getUser()
+                    }
+                ]
+                setUser(_user)
+            }
+                
+            
+            
         } fetchData()
 
     },[])
@@ -61,15 +77,25 @@ export default function CreateProspecting() {
         <div className='page-create-config'>
             <form className='form-horizontal'>
                 <div className='form-group row align-items-center'>
-                        <Col xl="2" md="3">
-                            <Form.Label>Sales<sup>*</sup></Form.Label>
-                        </Col>
-                        <Col xl="3" md="3">
-                            <Form.Select onChange={(event)=>setFormData({...formData, id_sales:event.target.value})}>
-                                { user.map((row) => (<option key={`${row.id}`} value={row.id}>{row.name}</option>) ) }
-                            </Form.Select>
-                        </Col>
-                    </div>
+                    <Col xl="2" md="3">
+                        <Form.Label>Sales<sup>*</sup></Form.Label>
+                    </Col>
+                    <Col xl="3" md="3">
+                        <Form.Select defaultValue = {getUserId()} onChange={(event)=>setFormData({...formData, id_sales:event.target.value})}>
+                            { user.map((row) => (<option key={`${row.id}`} value={row.id}>{row.name}</option>) ) }
+                        </Form.Select>
+                    </Col>
+                </div>
+                <div className='form-group row align-items-center'>
+                    <Col xl="2" md="3">
+                        <Form.Label>Type Product<sup>*</sup></Form.Label>
+                    </Col>
+                    <Col xl="3" md="3">
+                        <Form.Select onChange={(event)=>setFormData({...formData, id_company:event.target.value})}>
+                            { companies.map((row) => (<option key={`${row.id}`} value={row.id}>{row.name_company}</option>) ) }
+                        </Form.Select>
+                    </Col>
+                </div>
                 <div className='form-group row align-items-center'>
                     <Col xl="2" md="3">
                         <Form.Label>Company Name</Form.Label>

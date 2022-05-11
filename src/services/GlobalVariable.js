@@ -1,8 +1,9 @@
 let User = {
-    name : "",
-    email : "",
-    id : 0,
-    token : "",
+    name : localStorage.getItem('name'),
+    email : localStorage.getItem('email'),
+    id : localStorage.getItem('id'),
+    role : localStorage.getItem('role'),
+    token : localStorage.getItem('token'),
 }
 
 export function setUser(form) {
@@ -14,9 +15,17 @@ export function getUser() {
 }
 
 export function getUsername() {
-    return User.username;
+    return User.email;
 }
 
 export function getToken() {
     return User.token;
+}
+
+export function getRole() {
+    return User.role;
+}
+
+export function getUserId() {
+    return User.id;
 }

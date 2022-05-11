@@ -17,12 +17,16 @@ export default async function signIn(data={}){
         if (_response.status === 200) {
             let form = {
                 id: _response.data.user.id,
-                username: _response.data.user.email,
+                email: _response.data.user.email,
                 name: _response.data.user.name,
+                role: _response.data.user.role,
                 token : _response.data.token
             }
             setUser(form)
-            localStorage.setItem("user", JSON.stringify(_response.data.user))
+            localStorage.setItem("name", _response.data.user.name)
+            localStorage.setItem("id", _response.data.user.id)
+            localStorage.setItem("email", _response.data.user.email)
+            localStorage.setItem("role", _response.data.user.role)
             localStorage.setItem("token", _response.data.token)
             return {
                 id: _response.data.user.id,
