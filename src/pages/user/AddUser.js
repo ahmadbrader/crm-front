@@ -30,6 +30,7 @@ export default function AddUser() {
     useEffect(()=>{
         setPageData({...pageData, active:'setup-notification', title: 'Add New Sales / Admin' })
         setFormData({...formData, id_company:1})
+        setFormData({...formData, role:"Admin"})
         async function fetchData(){
             
         } fetchData()
