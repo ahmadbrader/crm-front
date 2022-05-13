@@ -8,6 +8,7 @@ function _get(url='', parameter='') {
         url: `${API_HOST}/${url}${parameter}`,
         method: "GET",
         headers: {
+            "Content-Type": "application/json",
             "Authorization" : "Bearer "+ getToken() 
         }
     }

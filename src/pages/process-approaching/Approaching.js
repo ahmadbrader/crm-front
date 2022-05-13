@@ -196,15 +196,18 @@ export default function Approaching() {
         },
         {
             name: 'Range',
-            selector: row => <span>{ dateDiffRange(row.date_status) }</span>
+            selector: row => <span>{ dateDiffRange(row.date_status) }</span>,
+            sortable: true,
         },
         {
             name: 'Last Contact',
-            selector: row => <span>{ dayjs(row.date_status).format('DD/MM/YYYY') }</span>
+            selector: row => <span>{ dayjs(row.date_status).format('DD/MM/YYYY') }</span>,
+            sortable: true,
         },
         {
             name: 'Status',
-            selector: row => row.name_status
+            selector: row => row.name_status,
+            sortable: true,
         },
         {
             name: 'Note',
@@ -236,17 +239,13 @@ export default function Approaching() {
 
             <Modal show={showEditModal} onHide={onHideEditModal} backdrop="static" keyboard={false}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Edit Application Source</Modal.Title>
+                    <Modal.Title>Move to Presentation or Closing</Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body>
                     <div className='form-group'>
                         <Form.Label>Company Name</Form.Label>
                         <input type="text" className='form-control' defaultValue={formModal.company_contact} readOnly/>
-                    </div>
-                    <div className='form-group'>
-                        <Form.Label>Product</Form.Label>
-                        <input type="text" className='form-control' defaultValue={formModal.product_temp} readOnly />
                     </div>
                     <div className='form-group'>
                         <Form.Label>Notes</Form.Label>

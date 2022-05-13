@@ -209,7 +209,8 @@ export default function Presentation() {
         },
         {
             name: 'Range',
-            selector: row => <span>{ dateDiffRange(row.date_status) }</span>
+            selector: row => <span>{ dateDiffRange(row.date_status) }</span>,
+            sortable: true,
         },
         {
             name: 'Last Contact',

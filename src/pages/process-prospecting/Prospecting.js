@@ -142,7 +142,7 @@ export default function Prospecting() {
     const dateDiffRange = (date) => {
 
         var now = dayjs()
-        return now.diff(date, 'day') + ' Days'
+        return String(now.diff(date, 'day') + ' day')
     }
 
     const onChangeTask = (event) => {
@@ -171,10 +171,10 @@ export default function Prospecting() {
             sortable: true,
         },
         {
-            name: 'type',
-            selector: row => row.type_of_prospect,
+            name: 'Product From',
+            selector: row => row.company_product,
             sortable: true,
-            width: '5%'
+            width: '10%'
         },
         {
             name: 'Email',
@@ -208,11 +208,13 @@ export default function Prospecting() {
         },
         {
             name: 'Range',
-            selector: row => <span>{ dateDiffRange(row.date_status) }</span>
+            selector: row => <span>{ dateDiffRange(row.date_status) }</span>,
+            sortable: true,
         },
         {
             name: 'Last Contact',
-            selector: row => <span>{ dayjs(row.date_status).format('DD/MM/YYYY') }</span>
+            selector: row => <span>{ dayjs(row.date_status).format('DD/MM/YYYY') }</span>,
+            sortable: true,
         },
         {
             name: 'Action',
@@ -249,10 +251,6 @@ export default function Prospecting() {
                         <input type="text" className='form-control' defaultValue={formModal.company_contact} readOnly/>
                     </div>
                     <div className='form-group'>
-                        <Form.Label>Product</Form.Label>
-                        <input type="text" className='form-control' defaultValue={formModal.product_temp} readOnly />
-                    </div>
-                    <div className='form-group'>
                         <Form.Label>Contact Number</Form.Label>
                         <input type="text" className='form-control' defaultValue={formModal.mobile_phone_contact} onChange={onChangePhone} required/>
                     </div>
@@ -263,10 +261,6 @@ export default function Prospecting() {
                     <div className='form-group'>
                         <Form.Label>Notes</Form.Label>
                         <Form.Control as="textarea" rows={3} defaultValue={formModal.notes_contact} onChange={(event)=>setFormModal({...formModal, notes_contact: event.target.value})}/>
-                    </div>
-                    <div className='form-group'>
-                        <Form.Label>Date</Form.Label>
-                        <input type="date" className='form-control' onChange={onChangeDateExe} dateFormat="dd/MM/yyyy"/>
                     </div>
                 </Modal.Body>
 
