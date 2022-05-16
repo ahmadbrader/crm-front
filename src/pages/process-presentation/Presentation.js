@@ -177,10 +177,10 @@ export default function Presentation() {
             sortable: true,
         },
         {
-            name: 'type',
-            selector: row => row.type_of_prospect,
+            name: 'Product From',
+            selector: row => row.name_company,
             sortable: true,
-            width: '5%'
+            width: '10%'
         },
         {
             name: 'Email',
@@ -248,24 +248,6 @@ export default function Presentation() {
                 />
             </div>
 
-            <Modal show={showEditModal} onHide={onHideEditModal} backdrop="static" keyboard={false}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Edit Application Source</Modal.Title>
-                </Modal.Header>
-
-                <Modal.Body>
-                    <div className='form-group'>
-                        <Form.Label>Application Name</Form.Label>
-                        <input type="text" className='form-control' onChange={onChangeEditName} defaultValue={formModal.application_name} placeholder='Type the application name' />
-                    </div>
-                </Modal.Body>
-
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={onHideEditModal}>Close</Button>
-                    <Button variant="primary" onClick={onSaveEdit}>Save Change</Button>
-                </Modal.Footer>
-            </Modal>
-
             <Modal show={showProductModal} onHide={()=>setShowProductModal(false)} backdrop="static" keyboard={false}>
                 <Modal.Header closeButton>
                     <Modal.Title>Add Product</Modal.Title>
@@ -301,10 +283,6 @@ export default function Presentation() {
                     <div className='form-group'>
                         <Form.Label>Company Name</Form.Label>
                         <input type="text" className='form-control' defaultValue={formModal.company_contact} readOnly/>
-                    </div>
-                    <div className='form-group'>
-                        <Form.Label>Product</Form.Label>
-                        <input type="text" className='form-control' defaultValue={formModal.product_temp} readOnly />
                     </div>
                 </Modal.Body>
 

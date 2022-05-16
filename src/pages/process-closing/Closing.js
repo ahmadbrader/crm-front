@@ -118,9 +118,10 @@ export default function Closing() {
             sortable: true,
         },
         {
-            name: 'type',
-            selector: row => row.type_of_prospect,
-            sortable: true
+            name: 'Product From',
+            selector: row => row.name_company,
+            sortable: true,
+            width: '10%'
         },
         {
             name: 'Email',

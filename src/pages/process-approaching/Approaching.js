@@ -9,11 +9,11 @@ import 'assets/css/Datatable.scss';
 
 import AppContext from 'utils/AppContext'
 import ButtonAction from 'components/datatable/ButtonAction';
-import { getProspecting, updateToPresenting, getStatusByType, changeStatusContact } from 'services/RestApi';
-
+import { getProspecting, updateToPresenting, getStatusByType, changeStatusContact, updateToClosing, addProduct } from 'services/RestApi';
+import { useNavigate } from 'react-router-dom';
 
 export default function Approaching() {
-
+    let navigate = useNavigate()
     const {setPageData, pageData} = useContext( AppContext )
     const [ showEditModal, setShowEditModal ]  = useState(false)
     const [ showAddModal, setShowAddModal ]  = useState(false)
@@ -26,7 +26,10 @@ export default function Approaching() {
     const [ idContact, setIdContact ] = useState("")
     const [ noteContact, setNoteContact ] = useState("")
     const [ idStatus, setStatusId ] = useState("")
+    const [ nameStatus, setNameStatus ] = useState("presentation")
     const [ statusType, setStatusType ] = useState([])
+    const [ showProductModal, setShowProductModal ]  = useState(false)
+    const [ formAddProduct, setFormAddProduct ] = useState({contact_id: 0, name_product: 'String', qty : '', price : ''})
 
     useEffect(()=>{
         setPageData({...pageData, active:'process', title: 'Approaching' })
@@ -58,53 +61,48 @@ export default function Approaching() {
         setNoteContact(item.notes_contact)
         setEditStatus(true)
     }
-    
 
     const onAction = (item) => {
+        setIdContact(item.id)
         setFormModal({...formModal, ...item})
         setShowEditModal(true)
     }
 
-    const onHideAddModal = () => {
-        setShowAddModal(false)
-    }
-
-    const onAdd = () => {
-        setShowAddModal(true)
-    }
-
-    const onChangeEditName = (event) => {
-        setFormModal({...formModal, application_name: event.target.value})
-    }
-
-    const onSaveEdit = async () => {
+    const onSaveAddProduct = async () => {
         toast.loading('Saving data...')
         try {
-            await updateToPresenting(formModal) 
+            await addProduct(formAddProduct)
+            setShowProductModal(false)
             toast.dismiss()
-            fetchData()
-            setShowEditModal(false)
-
-        } catch(error) {
+            navigate(`/app/process/closing/${idContact}`)
+        } catch (error) {
             toast.dismiss()
             toast.error('Error updating data.')
         }
     }
 
-    const onDelete = async (item) => {
+    const onSaveEdit = async () => {
+        toast.loading('Saving data...')
         try {
-            toast.loading('Deleting data...')
-            // await deleteApplication(item.id)
-            fetchData()
-            toast.dismiss()
+            if (nameStatus === 'presentation') {
+                await updateToPresenting(formModal) 
+                toast.dismiss()
+                fetchData()
+                setShowEditModal(false)
+            } else {
+                setFormAddProduct({...formAddProduct, contact_id:idContact})
+                await updateToClosing(formModal) 
+                toast.dismiss()
+                fetchData()
+                setShowEditModal(false)
+                setShowProductModal(true)
+            }
+           
+
         } catch(error) {
             toast.dismiss()
-            toast.error('Error deleting data.')
+            toast.error('Error updating data.')
         }
-    }
-
-    const onChangeTask = (event) => {
-        setFormModal({...formModal, task_approaching: event.target.value})
     }
     
     const onChangeDateExe = (event) => {
@@ -164,10 +162,10 @@ export default function Approaching() {
             sortable: true,
         },
         {
-            name: 'type',
-            selector: row => row.type_of_prospect,
+            name: 'Product From',
+            selector: row => row.name_company,
             sortable: true,
-            width: '5%'
+            width: '10%'
         },
         {
             name: 'Email',
@@ -248,6 +246,13 @@ export default function Approaching() {
                         <input type="text" className='form-control' defaultValue={formModal.company_contact} readOnly/>
                     </div>
                     <div className='form-group'>
+                        <Form.Label>Status</Form.Label>
+                        <Form.Select onChange={(event)=>setNameStatus(event.target.value)} defaultValue='presentation'>
+                            <option value='presentation'>Presentation</option>
+                            <option value='closing'>Closing</option>
+                        </Form.Select>
+                    </div>
+                    <div className='form-group'>
                         <Form.Label>Notes</Form.Label>
                         <Form.Control as="textarea" rows={3} defaultValue={noteContact} onChange={(event)=>setNoteContact(event.target.value)}/>
                     </div>
@@ -260,24 +265,6 @@ export default function Approaching() {
                 <Modal.Footer>
                     <Button variant="secondary" onClick={onHideEditModal}>Close</Button>
                     <Button variant="primary" onClick={onSaveEdit}>Save Change</Button>
-                </Modal.Footer>
-            </Modal>
-
-            <Modal show={showAddModal} onHide={onHideAddModal} backdrop="static" keyboard={false}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add Application Source</Modal.Title>
-                </Modal.Header>
-
-                <Modal.Body>
-                    <div className='form-group'>
-                        <Form.Label>Application Name</Form.Label>
-                        <input type="text" className='form-control' onChange={onChangeEditName} placeholder='Type the application name' />
-                    </div>
-                </Modal.Body>
-
-                <Modal.Footer>
-                    <Button variant="outline-secondary" onClick={onHideAddModal}>Close</Button>
-                    <Button variant="primary" onClick={onSaveEdit}>Save Data</Button>
                 </Modal.Footer>
             </Modal>
 
@@ -318,6 +305,32 @@ export default function Approaching() {
 
                 <Modal.Footer>
                     <Button variant="outline-secondary" onClick={()=>setShowNoteModal(false)}>Close</Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={showProductModal} onHide={()=>setShowProductModal(false)} backdrop="static" keyboard={false}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Add Product</Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    <div className='form-group'>
+                        <Form.Label>Product Name</Form.Label>
+                        <input type="text" className='form-control' onChange={(event)=>setFormAddProduct({...formAddProduct, name_product:event.target.value})} placeholder='Type the application name' />
+                    </div>
+                    <div className='form-group'>
+                        <Form.Label>Price</Form.Label>
+                        <input type="text" className='form-control' onChange={(event)=>setFormAddProduct({...formAddProduct, price:event.target.value})} defaultValue={formModal.application_name} placeholder='Type the application name' />
+                    </div>
+                    <div className='form-group'>
+                        <Form.Label>Qty</Form.Label>
+                        <input type="text" className='form-control' onChange={(event)=>setFormAddProduct({...formAddProduct, qty:event.target.value})} defaultValue={formModal.application_name} placeholder='Type the application name' />
+                    </div>
+                </Modal.Body>
+
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={()=>setShowProductModal(false)}>Close</Button>
+                    <Button variant="primary" onClick={onSaveAddProduct}>Save Change</Button>
                 </Modal.Footer>
             </Modal>
         </div>

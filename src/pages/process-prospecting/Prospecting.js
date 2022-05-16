@@ -172,7 +172,7 @@ export default function Prospecting() {
         },
         {
             name: 'Product From',
-            selector: row => row.company_product,
+            selector: row => row.name_company,
             sortable: true,
             width: '10%'
         },
