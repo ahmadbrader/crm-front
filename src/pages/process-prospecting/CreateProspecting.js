@@ -102,6 +102,7 @@ export default function CreateProspecting() {
                 <div className='form-group row align-items-center'>
                     <Col xl="2" md="3">
                         <Form.Label>Company Name</Form.Label>
+                        
                     </Col>
                     <Col xl="3" md="3">
                         <div className='d-flex align-items-center'>
