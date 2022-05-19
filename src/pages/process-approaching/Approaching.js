@@ -9,7 +9,7 @@ import 'assets/css/Datatable.scss';
 
 import AppContext from 'utils/AppContext'
 import ButtonAction from 'components/datatable/ButtonAction';
-import { getProspecting, updateToPresenting, getStatusByType, changeStatusContact, updateToClosing, addProduct } from 'services/RestApi';
+import { getProspecting, updateToPresenting, getStatusByType, changeStatusContact, updateToClosing, addProduct, getNotesByContact } from 'services/RestApi';
 import { useNavigate } from 'react-router-dom';
 
 export default function Approaching() {
@@ -18,7 +18,9 @@ export default function Approaching() {
     const [ showEditModal, setShowEditModal ]  = useState(false)
     const [ showAddModal, setShowAddModal ]  = useState(false)
     const [ applicationData, setApplicationData ] = useState([])
+    const [ showDetail, setShowDetail ]  = useState(false)
     const [ prospectingData, setProspectingData ] = useState([])
+    const [ listNote, setListNote ] = useState([])
     const [ formModal, setFormModal ] = useState({id: '', application_name: ''})
     const [ showEditStatus, setEditStatus ]  = useState(false)
     const [ showNoteModal, setShowNoteModal ]  = useState(false)
@@ -110,7 +112,9 @@ export default function Approaching() {
         setFormModal({...formModal, date_approaching: dateExe.toISOString().split('T')[0]})
     }
 
-    const onShowModalNotes = (item) => {
+    const onShowModalNotes = async (item) => {
+        let _response = await getNotesByContact(item.id)
+        setListNote(_response.data);
         setNoteContact(item.notes_contact)
         setShowNoteModal(true)
     }
@@ -147,6 +151,11 @@ export default function Approaching() {
             toast.error('Error updating data.')
         }
     }
+
+    const onShowDetail = (item) => {
+        setFormModal({...formModal, ...item})
+        setShowDetail(true)
+    }
     
 
     const columns = [
@@ -168,11 +177,6 @@ export default function Approaching() {
             width: '10%'
         },
         {
-            name: 'Email',
-            selector: row => row.email_contact,
-            sortable: true,
-        },
-        {
             name: 'Name',
             selector: row => row.name_contact,
             sortable: true,
@@ -183,23 +187,18 @@ export default function Approaching() {
             sortable: true,
         },
         {
-            name: 'Product',
-            selector: row => row.product_temp,
-            sortable: true,
-        },
-        {
             name: 'Sales',
             selector: row => row.name_user,
             sortable: true,
         },
         {
             name: 'Range',
-            selector: row => <span>{ dateDiffRange(row.date_status) }</span>,
+            selector: row => dateDiffRange(row.date_status),
             sortable: true,
         },
         {
             name: 'Last Contact',
-            selector: row => <span>{ dayjs(row.date_status).format('DD/MM/YYYY') }</span>,
+            selector: row => dayjs(row.date_status).format('DD/MM/YYYY'),
             sortable: true,
         },
         {
@@ -211,6 +210,10 @@ export default function Approaching() {
             name: 'Note',
             selector: row => <Button variant="outline-success" onClick={()=>onShowModalNotes(row)}>Show</Button>,
             sortable: true,
+        },
+        {
+            name: 'Detail',
+            selector: row => <Button variant="outline-success" onClick={()=>onShowDetail(row)}>Show</Button>,
         },
         {
             name: 'Action',
@@ -257,7 +260,7 @@ export default function Approaching() {
                         <Form.Control as="textarea" rows={3} defaultValue={noteContact} onChange={(event)=>setNoteContact(event.target.value)}/>
                     </div>
                     <div className='form-group'>
-                        <Form.Label>Date</Form.Label>
+                        <Form.Label>Date of Presentation</Form.Label>
                         <input type="date" className='form-control' onChange={onChangeDateExe} dateFormat="dd/MM/yyyy"/>
                     </div>
                 </Modal.Body>
@@ -297,10 +300,14 @@ export default function Approaching() {
                 </Modal.Header>
 
                 <Modal.Body>
-                    <div className='form-group'>
-                        <Form.Label>Notes</Form.Label>
-                        <Form.Control as="textarea" rows={3} defaultValue={noteContact} readOnly />
-                    </div>
+                    {
+                        listNote.map((row) => (
+                        <div className='form-group mt-2' key={`${row.id}`}>
+                            <Form.Label>{dayjs(row.created_at).format('DD/MM/YYYY')}</Form.Label>
+                            <Form.Control as="textarea" rows={3} defaultValue={row.notes} readOnly />
+                        </div>
+                        ))
+                    }
                 </Modal.Body>
 
                 <Modal.Footer>
@@ -331,6 +338,53 @@ export default function Approaching() {
                 <Modal.Footer>
                     <Button variant="secondary" onClick={()=>setShowProductModal(false)}>Close</Button>
                     <Button variant="primary" onClick={onSaveAddProduct}>Save Change</Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={showDetail} onHide={()=>setShowDetail(false)} backdrop="static" keyboard={false}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Detail</Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    <div className='form-group'>
+                        <Form.Label>Company Name</Form.Label>
+                        <input type="text" className='form-control' defaultValue={formModal.company_contact} readOnly/>
+                    </div>
+                    <div className='form-group mt-2'>
+                        <Form.Label>Contact Name</Form.Label>
+                        <input type="text" className='form-control' defaultValue={formModal.name_contact} readOnly/>
+                    </div>
+                    <div className='form-group mt-2'>
+                        <Form.Label>Contact Number</Form.Label>
+                        <input type="text" className='form-control' defaultValue={formModal.mobile_phone_contact} readOnly/>
+                    </div>
+                    <div className='form-group mt-2'>
+                        <Form.Label>Email</Form.Label>
+                        <input type="text" className='form-control' defaultValue={formModal.email_contact} readOnly />
+                    </div>
+                    <div className='form-group mt-2'>
+                        <Form.Label>Product From</Form.Label>
+                        <input type="text" className='form-control' defaultValue={formModal.name_company} readOnly />
+                    </div>
+                    <div className='form-group mt-2'>
+                        <Form.Label>Sales</Form.Label>
+                        <input type="text" className='form-control' defaultValue={formModal.name_user} readOnly />
+                    </div>
+                    <div className='form-group mt-2'>
+                        <Form.Label>Status</Form.Label>
+                        <input type="text" className='form-control' defaultValue={formModal.name_status} readOnly />
+                    </div>
+                    <div className='form-group mt-2'>
+                        <Form.Label>Last Contact</Form.Label>
+                        <input type="text" className='form-control' defaultValue={dayjs(formModal.date_status).format('DD/MM/YYYY')} readOnly />
+                    </div>
+                    <div className='form-group mt-2'>
+                        <Form.Label>Last Notes</Form.Label>
+                        <Form.Control as="textarea" rows={3} defaultValue={formModal.notes_contact} readOnly/>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={()=>setShowDetail(false)}>Close</Button>
                 </Modal.Footer>
             </Modal>
         </div>

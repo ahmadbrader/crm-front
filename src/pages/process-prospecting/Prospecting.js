@@ -9,7 +9,7 @@ import 'assets/css/Datatable.scss';
 
 import AppContext from 'utils/AppContext'
 import ButtonAction from 'components/datatable/ButtonAction';
-import { createApplication, deleteApplication, getProspecting, updateToApproaching, getStatusByType, changeStatusContact } from 'services/RestApi';
+import { createApplication, deleteApplication, getProspecting, updateToApproaching, getStatusByType, changeStatusContact, getNotesByContact } from 'services/RestApi';
 
 
 export default function Prospecting() {
@@ -18,8 +18,10 @@ export default function Prospecting() {
     const [ showEditModal, setShowEditModal ]  = useState(false)
     const [ showAddModal, setShowAddModal ]  = useState(false)
     const [ showEditStatus, setEditStatus ]  = useState(false)
+    const [ showDetail, setShowDetail ]  = useState(false)
     const [ showNoteModal, setShowNoteModal ]  = useState(false)
     const [ prospectingData, setProspectingData ] = useState([])
+    const [ listNote, setListNote ] = useState([])
     const [ formModal, setFormModal ] = useState([])
     const [ statusType, setStatusType ] = useState([])
     const [ rowFromStatus, setRowFromStatus ] = useState([])
@@ -76,18 +78,16 @@ export default function Prospecting() {
         setShowEditModal(true)
     }
 
-    const onShowModalNotes = (item) => {
+    const onShowModalNotes = async (item) => {
+        let _response = await getNotesByContact(item.id)
+        setListNote(_response.data);
         setNoteContact(item.notes_contact)
         setShowNoteModal(true)
     }
 
-    const onStatus = (item) => {
-        setNoteContact(item.notes_contact)
-        setEditStatus(true)
-    }
-
-    const onChangeEditName = (event) => {
-        setFormModal({...formModal, application_name: event.target.value})
+    const onShowDetail = (item) => {
+        setFormModal({...formModal, ...item})
+        setShowDetail(true)
     }
 
     const onSaveEdit = async () => {
@@ -142,21 +142,27 @@ export default function Prospecting() {
     const dateDiffRange = (date) => {
 
         var now = dayjs()
-        return String(now.diff(date, 'day') + ' day')
-    }
-
-    const onChangeTask = (event) => {
-        setFormModal({...formModal, task_prospecting: event.target.value})
+        var result = now.diff(date, 'day') + ' days'
+        return result;
     }
 
     const onChangePhone = (event) => {
         setFormModal({...formModal, mobile_phone_contact: event.target.value})
     }
+    const caseInsensitiveSort = (rowA, rowB) => {
+        // const a = rowA.title.toLowerCase();
+        // const b = rowB.title.toLowerCase();
     
-    const onChangeDateExe = (event) => {
-        var dateExe = new Date(event.target.value);
-        setFormModal({...formModal, date_prospecting: dateExe.toISOString().split('T')[0]})
-    }
+        // if (a > b) {
+        //     return 1;
+        // }
+    
+        // if (b > a) {
+        //     return -1;
+        // }
+    
+        // return 0;
+    };
 
     const columns = [
         {
@@ -177,13 +183,13 @@ export default function Prospecting() {
             width: '10%'
         },
         {
-            name: 'Email',
-            selector: row => row.email_contact,
+            name: 'Name',
+            selector: row => row.name_contact,
             sortable: true,
         },
         {
-            name: 'Name',
-            selector: row => row.name_contact,
+            name: 'Position',
+            selector: row => row.position,
             sortable: true,
         },
         {
@@ -202,18 +208,22 @@ export default function Prospecting() {
             sortable: true,
         },
         {
+            name: 'Detail',
+            selector: row => <Button variant="outline-success" onClick={()=>onShowDetail(row)}>Show</Button>,
+        },
+        {
             name: 'Status',
             selector: row => row.name_status,
             sortable: true,
         },
         {
             name: 'Range',
-            selector: row => <span>{ dateDiffRange(row.date_status) }</span>,
+            selector: row =>  dateDiffRange(row.date_status),
             sortable: true,
         },
         {
             name: 'Last Contact',
-            selector: row => <span>{ dayjs(row.date_status).format('DD/MM/YYYY') }</span>,
+            selector: row => dayjs(row.date_status).format('DD/MM/YYYY'),
             sortable: true,
         },
         {
@@ -270,6 +280,55 @@ export default function Prospecting() {
                 </Modal.Footer>
             </Modal>
 
+            <Modal show={showDetail} onHide={()=>setShowDetail(false)} backdrop="static" keyboard={false}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Detail</Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    <div className='form-group'>
+                        <Form.Label>Company Name</Form.Label>
+                        <input type="text" className='form-control' defaultValue={formModal.company_contact} readOnly/>
+                    </div>
+                    <div className='form-group mt-2'>
+                        <Form.Label>Contact Name</Form.Label>
+                        <input type="text" className='form-control' defaultValue={formModal.name_contact} readOnly/>
+                    </div>
+                    <div className='form-group mt-2'>
+                        <Form.Label>Contact Number</Form.Label>
+                        <input type="text" className='form-control' defaultValue={formModal.mobile_phone_contact} readOnly/>
+                    </div>
+                    <div className='form-group mt-2'>
+                        <Form.Label>Email</Form.Label>
+                        <input type="text" className='form-control' defaultValue={formModal.email_contact} readOnly />
+                    </div>
+                    <div className='form-group mt-2'>
+                        <Form.Label>Product From</Form.Label>
+                        <input type="text" className='form-control' defaultValue={formModal.name_company} readOnly />
+                    </div>
+                    <div className='form-group mt-2'>
+                        <Form.Label>Sales</Form.Label>
+                        <input type="text" className='form-control' defaultValue={formModal.name_user} readOnly />
+                    </div>
+                    <div className='form-group mt-2'>
+                        <Form.Label>Status</Form.Label>
+                        <input type="text" className='form-control' defaultValue={formModal.name_status} readOnly />
+                    </div>
+                    <div className='form-group mt-2'>
+                        <Form.Label>Last Contact</Form.Label>
+                        <input type="text" className='form-control' defaultValue={dayjs(formModal.date_status).format('DD/MM/YYYY')} readOnly />
+                    </div>
+                    <div className='form-group mt-2'>
+                        <Form.Label>Last Notes</Form.Label>
+                        <Form.Control as="textarea" rows={3} defaultValue={formModal.notes_contact} readOnly/>
+                    </div>
+                </Modal.Body>
+
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={()=>setShowDetail(false)}>Close</Button>
+                </Modal.Footer>
+            </Modal>
+
             <Modal show={showEditStatus} onHide={onHideEditStatusModal} backdrop="static" keyboard={false}>
                 <Modal.Header closeButton>
                     <Modal.Title>Edit Status</Modal.Title>
@@ -300,10 +359,14 @@ export default function Prospecting() {
                 </Modal.Header>
 
                 <Modal.Body>
-                    <div className='form-group'>
-                        <Form.Label>Notes</Form.Label>
-                        <Form.Control as="textarea" rows={3} defaultValue={noteContact} readOnly />
-                    </div>
+                    {
+                        listNote.map((row) => (
+                        <div className='form-group mt-2' key={`${row.id}`}>
+                            <Form.Label>{dayjs(row.created_at).format('DD/MM/YYYY')}</Form.Label>
+                            <Form.Control as="textarea" rows={3} defaultValue={row.notes} readOnly />
+                        </div>
+                        ))
+                    }
                 </Modal.Body>
 
                 <Modal.Footer>

@@ -9,7 +9,7 @@ import 'assets/css/Datatable.scss';
 
 import AppContext from 'utils/AppContext'
 import ButtonAction from 'components/datatable/ButtonAction';
-import { createApplication, deleteApplication, getProspecting, updateApplication, changeStatusContact, getStatusByType, updateToClosing, addProduct } from 'services/RestApi';
+import { createApplication, deleteApplication, getProspecting, updateApplication, changeStatusContact, getStatusByType, updateToClosing, addProduct, getNotesByContact } from 'services/RestApi';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -22,6 +22,7 @@ export default function Presentation() {
     const [ applicationData, setApplicationData ] = useState([])
     const [ prospectingData, setProspectingData ] = useState([])
     const [ formModal, setFormModal ] = useState({id: '', application_name: ''})
+    const [ listNote, setListNote ] = useState([])
     const [ showEditStatus, setEditStatus ]  = useState(false)
     const [ showNoteModal, setShowNoteModal ]  = useState(false)
     const [ rowFromStatus, setRowFromStatus ] = useState([])
@@ -131,7 +132,9 @@ export default function Presentation() {
         return now.diff(date, 'day') + ' Days'
     }
 
-    const onShowModalNotes = (item) => {
+    const onShowModalNotes = async (item) => {
+        let _response = await getNotesByContact(item.id)
+        setListNote(_response.data);
         setNoteContact(item.notes_contact)
         setShowNoteModal(true)
     }
@@ -183,23 +186,8 @@ export default function Presentation() {
             width: '10%'
         },
         {
-            name: 'Email',
-            selector: row => row.email_contact,
-            sortable: true,
-        },
-        {
             name: 'Name',
             selector: row => row.name_contact,
-            sortable: true,
-        },
-        {
-            name: 'Phone Contact',
-            selector: row => row.mobile_phone_contact,
-            sortable: true,
-        },
-        {
-            name: 'Product',
-            selector: row => row.product_temp,
             sortable: true,
         },
         {
@@ -209,12 +197,16 @@ export default function Presentation() {
         },
         {
             name: 'Range',
-            selector: row => <span>{ dateDiffRange(row.date_status) }</span>,
+            selector: row => dateDiffRange(row.date_status),
             sortable: true,
         },
         {
             name: 'Last Contact',
-            selector: row => <span>{ dayjs(row.date_status).format('DD/MM/YYYY') }</span>
+            selector: row => dayjs(row.date_status).format('DD/MM/YYYY')
+        },
+        {
+            name: 'Date of Presentation',
+            selector: row => dayjs(row.date_approaching).format('DD/MM/YYYY')
         },
         {
             name: 'Status',
@@ -297,10 +289,14 @@ export default function Presentation() {
                 </Modal.Header>
 
                 <Modal.Body>
-                    <div className='form-group'>
-                        <Form.Label>Notes</Form.Label>
-                        <Form.Control as="textarea" rows={3} defaultValue={noteContact} readOnly />
-                    </div>
+                    {
+                        listNote.map((row) => (
+                        <div className='form-group mt-2' key={`${row.id}`}>
+                            <Form.Label>{dayjs(row.created_at).format('DD/MM/YYYY')}</Form.Label>
+                            <Form.Control as="textarea" rows={3} defaultValue={row.notes} readOnly />
+                        </div>
+                        ))
+                    }
                 </Modal.Body>
 
                 <Modal.Footer>

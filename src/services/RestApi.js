@@ -83,6 +83,18 @@ export function getProspecting(type) {
     return _get(`process/`, type);
 }
 
+export function getNotesByContact(contact_id) {
+    return _get(`notes/`, contact_id);
+}
+
+export function getResetPassowrd() {
+    return _get(`reset`);
+}
+
+export function getResetPassowordByid(id) {
+    return _get(`user/reset/`, id);
+}
+
 export function getProductByIdContact(id) {
     return _get(`product/`, id);
 }

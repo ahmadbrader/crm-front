@@ -18,7 +18,7 @@ export default function CreateProspecting() {
     const [ companies, setCompany ] = useState([])
     const [ user, setUser ] = useState([])
     const [ formModal, setFormModal ] = useState([])
-    const [ formData, setFormData ] = useState([])
+    const [ formData, setFormData ] = useState({id_sales:getUserId(), type_of_prospect:"B2B",id_company:"1"})
 
     let navigate = useNavigate()
 
@@ -29,8 +29,11 @@ export default function CreateProspecting() {
     }
 
     useEffect(()=>{
-        setPageData({...pageData, active:'setup-notification', title: 'Create Notification Config' })
-
+        setPageData({...pageData, active:'setup-notification', title: 'Create New Prospecting' })
+        
+        // setFormData({...formData, id_sales:getUserId()})
+        // setFormData({...formData, type_of_prospect:"B2B"})
+        // setFormData({...formData, id_company:"1"})
         async function fetchData(){
             let _responseC = await getAllCompanies();
             setCompany(_responseC.data)
@@ -134,7 +137,7 @@ export default function CreateProspecting() {
 
                 <div className='form-group row align-items-center'>
                     <Col xl="2" md="3">
-                        <Form.Label>Email<sup>*</sup></Form.Label>
+                        <Form.Label>Email</Form.Label>
                     </Col>
                     <Col xl="3" md="3">
                         <div className='d-flex align-items-center'>
@@ -150,7 +153,18 @@ export default function CreateProspecting() {
                     </Col>
                     <Col xl="3" md="3">
                         <div className='d-flex align-items-center'>
-                            <Form.Control type="text" placeholder="Ex: PT abc" onChange={(event)=>setFormData({...formData, name_contact:event.target.value})} ref={inputRef.code} />
+                            <Form.Control type="text" onChange={(event)=>setFormData({...formData, name_contact:event.target.value})} ref={inputRef.code} />
+                            {/* <span className='ms-3'>last code: <strong>OPS-01</strong></span> */}
+                        </div>
+                    </Col>
+                </div>
+                <div className='form-group row align-items-center'>
+                    <Col xl="2" md="3">
+                        <Form.Label>Position<sup>*</sup></Form.Label>
+                    </Col>
+                    <Col xl="3" md="3">
+                        <div className='d-flex align-items-center'>
+                            <Form.Control type="text" placeholder="Ex: HRD" onChange={(event)=>setFormData({...formData, position:event.target.value})} ref={inputRef.code} />
                             {/* <span className='ms-3'>last code: <strong>OPS-01</strong></span> */}
                         </div>
                     </Col>
@@ -162,7 +176,7 @@ export default function CreateProspecting() {
                     </Col>
                     <Col xl="3" md="3">
                         <div className='d-flex align-items-center'>
-                            <Form.Control type="text" placeholder="Ex: PT abc" onChange={(event)=>setFormData({...formData, notes_contact:event.target.value})} ref={inputRef.code} />
+                            <Form.Control type="text" onChange={(event)=>setFormData({...formData, notes_contact:event.target.value})} ref={inputRef.code} />
                             {/* <span className='ms-3'>last code: <strong>OPS-01</strong></span> */}
                         </div>
                     </Col>

@@ -9,7 +9,8 @@ import 'assets/css/Datatable.scss';
 
 import AppContext from 'utils/AppContext'
 import ButtonAction from 'components/datatable/ButtonAction';
-import { createApplication, deleteApplication, getProspecting, getAllSales } from 'services/RestApi';
+import { getAllSales, getResetPassowordByid } from 'services/RestApi';
+import { getRole } from 'services/GlobalVariable';
 
 
 export default function Sales() {
@@ -39,51 +40,17 @@ export default function Sales() {
         }
     }
 
-    const onHideEditModal = () => {
-        setShowEditModal(false)
-    }
 
-    const onEdit = (item) => {
-        setFormModal({...formModal, ...item})
-        setShowEditModal(true)
-    }
-
-    const onHideAddModal = () => {
-        setShowAddModal(false)
-    }
-
-    const onAdd = () => {
-        setShowAddModal(true)
-    }
-
-    const onChangeEditName = (event) => {
-        setFormModal({...formModal, application_name: event.target.value})
-    }
-
-
-    const onSaveAdd = async () => {
-        toast.loading('Saving new data...')
+    const onReset = async (row) => {
+        console.log(row)
         try {
-            await createApplication(formModal.application_name)
-            toast.dismiss()
-            fetchData()
-            setShowAddModal(false)
-            toast.success('Data has been created')
-        } catch(error) {
-            toast.dismiss()
-            toast.error('Error saving data.')
-        }
-    }
-
-    const onDelete = async (item) => {
-        try {
-            toast.loading('Deleting data...')
-            await deleteApplication(item.id)
+            toast.loading('Reset Password...')
+            await getResetPassowordByid(row.id)
             fetchData()
             toast.dismiss()
         } catch(error) {
             toast.dismiss()
-            toast.error('Error deleting data.')
+            toast.error('Error reset password.')
         }
     }
 
@@ -107,7 +74,10 @@ export default function Sales() {
                                         <Card.Text>
                                             {row.email}
                                         </Card.Text>
-                                        <Button variant="danger">Delete</Button>
+                                        { getRole() == 'Admin' &&
+                                            <Button variant="warning" onClick={()=>onReset(row)}>Reset Password</Button>
+                                        }
+                                        
                                     </Card.Body>
                                 </Card>
                             </Col>
