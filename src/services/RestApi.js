@@ -104,7 +104,11 @@ export function getStatusByType(type) {
 }
 
 export function getActivityToday() {
-    return _get(`status/activity-today`);
+    return _get(`status/activity/today`);
+}
+
+export function getActivityMonth() {
+    return _get(`status/activity/month`);
 }
 
 export function changeStatusContact(id, status, form) {
@@ -148,6 +152,10 @@ export function getAllCompanies() {
 
 export function getApplications() {
     return _get(API_ENDPOINT.application);
+}
+
+export function filterProcess(process, contact) {
+    return _post("process", contact, process);
 }
 
 export function createApplication(application_name) {

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { forwardRef, useContext, useEffect, useRef, useState } from 'react'
 import { Col, Form, Tab, Tabs } from 'react-bootstrap'
 import toast from 'react-hot-toast'
 import { getAllSales, getAllCompanies, saveNewProspecting } from 'services/RestApi'
@@ -7,12 +7,14 @@ import { validateMasterForm } from "utils/ConfigFormValidation"
 import { showAlertLoader, closeAlert } from "utils/Alert"
 import { useNavigate } from 'react-router-dom'
 import { getUserId, getRole, getUser } from 'services/GlobalVariable'
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function CreateProspecting() {
 
     const {setPageData, pageData} = useContext( AppContext )
     const [ activeTab, setActiveTab ] = useState('wa')
-
+    const [startDate, setStartDate] = useState(new Date());
     const [ departments, setDepartments ] = useState([])
     const [ applicationSource, setApplicationSource ] = useState([])
     const [ companies, setCompany ] = useState([])
@@ -75,6 +77,10 @@ export default function CreateProspecting() {
         }
 
     }
+
+    const CustomInput = forwardRef(({ value, onClick }, ref) => (
+            <Form.Control defaultValue={value} onClick={onClick} ref={ref} />
+    ));
 
     return (
         <div className='page-create-config'>
@@ -169,7 +175,16 @@ export default function CreateProspecting() {
                         </div>
                     </Col>
                 </div>
-
+                <div className='form-group row align-items-center'>
+                    <Col xl="2" md="3">
+                        <Form.Label>Birthday</Form.Label>
+                    </Col>
+                    <Col xl="3" md="3">
+                        <div className='d-flex align-items-center'>
+                            <DatePicker selected={formData.birthday} customInput={<CustomInput />} onChange={(date:Date) => setFormData({...formData, birthday:date})} />
+                        </div>
+                    </Col>
+                </div>
                 <div className='form-group row align-items-center'>
                     <Col xl="2" md="3">
                         <Form.Label>Notes</Form.Label>

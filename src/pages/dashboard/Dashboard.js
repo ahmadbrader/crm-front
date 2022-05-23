@@ -8,7 +8,7 @@ import { changeDocumentTitle } from 'utils/Helper'
 import { Card, Col, Container, Row, Table } from 'react-bootstrap'
 import { Button, Form, Modal } from 'react-bootstrap';
 import toast from 'react-hot-toast'
-import { getProspecting, getStatusByType, getActivityToday} from 'services/RestApi';
+import { getProspecting, getStatusByType, getActivityToday, getActivityMonth} from 'services/RestApi';
 import dayjs from 'dayjs'
 import DataTable from 'react-data-table-component'
 
@@ -21,6 +21,7 @@ export default function Dashboard() {
   const [ approachingData, setApproachingData ] = useState([])
   const [ presentationData, setPresentationData ] = useState([])
   const [ countActivity, setCountActivity ] = useState([])
+  const [ countActivityMonth, setCountActivityMonth ] = useState([])
   const [ closingData, setClosingData ] = useState([])
   const [ showNoteModal, setShowNoteModal ]  = useState(false)
 
@@ -39,12 +40,14 @@ async function fetchData() {
       let _responseClo = await getProspecting(5);
       let _status = await getStatusByType(1);
       let _rCount = await getActivityToday();
+      let _rCount2 = await getActivityMonth();
       setStatusType(_status.data)
       setProspectingData(_response.data)
       setApproachingData(_responseApp.data)
       setPresentationData(_responsePre.data)
       setClosingData(_responseClo.data)
       setCountActivity(_rCount.data)
+      setCountActivityMonth(_rCount2.data)
       toast.dismiss()
   } catch(error) {
       toast.dismiss()
@@ -197,7 +200,36 @@ const columns = [
                       <tr>
                         <td>3</td>
                         <td>Presentaion</td>
-                        <td>{countActivity.presenation}</td>
+                        <td>{countActivity.presentation}</td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                </Row>
+                <Row className='mt-4'>
+                  <h4>Month's Activity</h4>
+                  <Table striped bordered hover>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Type</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>1</td>
+                        <td>Prospecting</td>
+                        <td>{countActivityMonth.prospecting}</td>
+                      </tr>
+                      <tr>
+                        <td>2</td>
+                        <td>Approaching</td>
+                        <td>{countActivityMonth.approaching}</td>
+                      </tr>
+                      <tr>
+                        <td>3</td>
+                        <td>Presentaion</td>
+                        <td>{countActivityMonth.presentation}</td>
                       </tr>
                     </tbody>
                   </Table>

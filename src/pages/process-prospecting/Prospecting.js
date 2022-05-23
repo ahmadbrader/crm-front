@@ -3,13 +3,13 @@ import DataTable from 'react-data-table-component';
 import { FaSortAmountDownAlt } from "react-icons/fa";
 import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Button, Card, Col, Form, Modal, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import 'assets/css/Datatable.scss';
 
 import AppContext from 'utils/AppContext'
 import ButtonAction from 'components/datatable/ButtonAction';
-import { createApplication, deleteApplication, getProspecting, updateToApproaching, getStatusByType, changeStatusContact, getNotesByContact } from 'services/RestApi';
+import { createApplication, deleteApplication, getProspecting, updateToApproaching, getStatusByType, changeStatusContact, getNotesByContact, getAllCompanies, getAllSales, filterProcess } from 'services/RestApi';
 
 
 export default function Prospecting() {
@@ -28,6 +28,9 @@ export default function Prospecting() {
     const [ idContact, setIdContact ] = useState("")
     const [ noteContact, setNoteContact ] = useState("")
     const [ idStatus, setStatusId ] = useState("")
+    const [ companies, setCompany ] = useState([])
+    const [ user, setUser ] = useState([])
+    const [ formData, setFormData ] = useState({id_company:"all", id_sales:"all"})
 
     let navigate = useNavigate()
     useEffect(()=>{
@@ -38,6 +41,10 @@ export default function Prospecting() {
     async function fetchData() {
         try {
             toast.loading('Fetching data...')
+            let _responseC = await getAllCompanies();
+            setCompany(_responseC.data)
+            let _responseU = await getAllSales();
+            setUser(_responseU.data)
             let _response = await getProspecting(1);
             let _status = await getStatusByType(1);
             setStatusType(_status.data)
@@ -96,6 +103,20 @@ export default function Prospecting() {
             await updateToApproaching(formModal) 
             toast.dismiss()
             fetchData()
+            setShowEditModal(false)
+
+        } catch(error) {
+            toast.dismiss()
+            toast.error('Error updating data.')
+        }
+    }
+
+    const onFilter = async () => {
+        toast.loading('Search data...')
+        try {
+            let _response = await filterProcess(1,formData) 
+            toast.dismiss()
+            setProspectingData(_response.data)
             setShowEditModal(false)
 
         } catch(error) {
@@ -235,6 +256,34 @@ export default function Prospecting() {
 
     return (
         <div className='page-application'>
+            <Card body style={{marginBottom:'30px', paddingTop: 5, paddingBottom: 10}}>
+                <div className='form-search'>
+                    <Row>
+                        <Col>
+                            <div className="form-group">
+                                <Form.Label>Product From</Form.Label>
+                                <Form.Select  onChange={(event)=>setFormData({...formData, id_company:event.target.value})}>
+                                    <option value="all">All</option>
+                                    { companies.map((row) => (<option key={`${row.id}`} value={row.id}>{row.name_company}</option>) ) }
+                                   
+                                </Form.Select>
+                            </div>
+                        </Col>
+                        <Col>
+                            <div className="form-group">
+                                <Form.Label>Sales</Form.Label>
+                                <Form.Select onChange={(event)=>setFormData({...formData, id_sales:event.target.value})}>
+                                    <option value="all">All</option>
+                                    { user.map((row) => (<option key={`${row.id}`} value={row.id}>{row.name}</option>) ) }
+                                </Form.Select>
+                            </div>
+                        </Col>
+                        <Col lg="2" className='button-wrapper'>
+                            <Button variant='primary' onClick={onFilter}>Search</Button>
+                        </Col>
+                    </Row>
+                </div>
+            </Card>
             <div className='enotif-datatable'>
                 <div className="datatable-head">
                 <Button variant="primary" onClick={()=>navigate('/app/process/prospecting/create')}>Create New</Button>
