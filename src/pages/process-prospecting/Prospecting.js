@@ -10,6 +10,7 @@ import 'assets/css/Datatable.scss';
 import AppContext from 'utils/AppContext'
 import ButtonAction from 'components/datatable/ButtonAction';
 import { createApplication, deleteApplication, getProspecting, updateToApproaching, getStatusByType, changeStatusContact, getNotesByContact, getAllCompanies, getAllSales, filterProcess } from 'services/RestApi';
+import { getRole, getUser, getUserId } from 'services/GlobalVariable';
 
 
 export default function Prospecting() {
@@ -43,12 +44,22 @@ export default function Prospecting() {
             toast.loading('Fetching data...')
             let _responseC = await getAllCompanies();
             setCompany(_responseC.data)
-            let _responseU = await getAllSales();
-            setUser(_responseU.data)
             let _response = await getProspecting(1);
             let _status = await getStatusByType(1);
             setStatusType(_status.data)
             setProspectingData(_response.data)
+            if (getRole() === 'Admin') {
+                let _responseU = await getAllSales();
+            setUser(_responseU.data)
+            } else {
+                let _user = [
+                    {
+                        'id' : getUserId(),
+                        'name' : getUser()
+                    }
+                ]
+                setUser(_user)
+            }
             toast.dismiss()
         } catch(error) {
             toast.dismiss()
@@ -273,7 +284,9 @@ export default function Prospecting() {
                             <div className="form-group">
                                 <Form.Label>Sales</Form.Label>
                                 <Form.Select onChange={(event)=>setFormData({...formData, id_sales:event.target.value})}>
-                                    <option value="all">All</option>
+                                    { getRole == 'Admin' &&
+                                        <option value="all">All</option>
+                                    }
                                     { user.map((row) => (<option key={`${row.id}`} value={row.id}>{row.name}</option>) ) }
                                 </Form.Select>
                             </div>
